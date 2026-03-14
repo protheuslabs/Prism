@@ -8,6 +8,20 @@ It helps a single operator run a 1M+ LoC codebase safely by turning policy, risk
 - Keep the operator loop tight: discover → score → plan → act → verify.
 - Emit machine-readable receipts for every major action.
 
+## Canonical implementation stack
+
+Prism is built as a Rust-first, deterministic complexity orchestration engine.
+
+- Language: Rust 2021
+- CLI: `clap` command/subcommand model with stable structured output schemas
+- State: SQLite + append-only `.prism` artifacts (`jsonl`, `json`, run snapshots)
+- Integrity: deterministic hashing, hash-chained audit ledger, optional signatures
+- Security: secrets redaction/encryption and strict policy enforcement modes
+- APIs/connectors: typed adapters and deterministic event emission
+
+Implementation detail and rollout sequencing are documented in:
+- [`PRISM_TECH_STACK.md`](/Users/jay/.openclaw/workspace/apps/prism/docs/PRISM_TECH_STACK.md)
+
 ## First commands
 
 ```bash
@@ -43,6 +57,19 @@ cargo run -- gate --root . --scope release
 
 - `prism incident`  
   Open/close operator incidents and attach evidence.
+
+## Current implementation priority
+
+Prism is currently documented and partially implemented through policy enforcement (`prism enforce`) and policy-aware gate path (`prism gate` / `prism do`).
+
+Planned high-priority stack completion lives in:
+- `BLK-023` Tamper-evident audit ledger and verification
+- `BLK-024` Fleet policy distribution and drift handling
+- `BLK-025` Deterministic enterprise connectors
+- `BLK-026` State backup and restore evidence
+- `BLK-028` SLO/health observability
+
+These map to the stack implementation plan in [`PRISM_TECH_STACK.md`](/Users/jay/.openclaw/workspace/apps/prism/docs/PRISM_TECH_STACK.md).
 
 ## Repo layout
 

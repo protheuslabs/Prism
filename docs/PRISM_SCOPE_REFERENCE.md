@@ -47,6 +47,9 @@ Prism expects LensMap to provide deterministic governance signals:
 
 Operational sequencing and acceptance detail lives in [`PRISM_BACKLOG.md`](/Users/jay/.openclaw/workspace/apps/prism/docs/PRISM_BACKLOG.md).
 
+Technical stack and phased implementation approach is defined in:
+[`PRISM_TECH_STACK.md`](/Users/jay/.openclaw/workspace/apps/prism/docs/PRISM_TECH_STACK.md).
+
 ## Hand-off Rule
 
 LensMap exports evidence and governance truth.

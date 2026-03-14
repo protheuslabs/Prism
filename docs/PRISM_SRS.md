@@ -19,6 +19,13 @@ The long-horizon objective is one-operator scalability: one operator can keep a 
 
 See also: [`PRISM_BACKLOG.md`](/Users/jay/.openclaw/workspace/apps/prism/docs/PRISM_BACKLOG.md) for executable implementation requirements and command-level acceptance criteria.
 
+## Reference Architecture
+
+The authoritative implementation stack and rollout sequencing are defined in:
+- [`PRISM_TECH_STACK.md`](/Users/jay/.openclaw/workspace/apps/prism/docs/PRISM_TECH_STACK.md)
+
+This doc is normative for design decisions that are not fully covered in individual SRS requirements (especially implementation ordering, module decomposition, and deterministic execution guarantees).
+
 ## Requirements
 
 ### PRISM-SRS-001 Repository Ingest
@@ -343,6 +350,71 @@ See also: [`PRISM_BACKLOG.md`](/Users/jay/.openclaw/workspace/apps/prism/docs/PR
   - `block` for strict violations that prevent execution/release.
 - Emergency override must require explicit signed token and produce an immutable override justification record.
 - Enforcer results shall be receipt-backed and deterministic, including policy checksum and effective profile.
+
+### PRISM-SRS-034 Audit Integrity and Non-Repudiation
+- Prism shall maintain a tamper-evident audit ledger for all plan, gate, and execution actions.
+- Each command run must emit:
+  - chained hash link to the prior action,
+  - previous/next ledger anchors,
+  - optional signer identity,
+  - and canonical serialized action payload.
+- The ledger shall be cryptographically verifiable via a public `prism audit verify` workflow.
+- Critical evidence and gate outcomes can be exported with an optional detached signature envelope for external compliance ingestion.
+
+### PRISM-SRS-035 Fleet-Scale Policy Federation
+- Prism shall support organization-level policy federation with:
+  - signed policy package references,
+  - deterministic policy cache refresh,
+  - policy source provenance,
+  - and explicit local override approval semantics.
+- Policy resolution must be deterministic across repos running the same policy package and environment profile.
+- Drift between local policy and fleet baseline shall be detected and flagged with required re-baseline tasks.
+
+### PRISM-SRS-036 Enterprise Connector and Orchestration API
+- Prism shall provide deterministic connectors for enterprise systems (GitHub, GitLab, Jira, ServiceNow, PagerDuty, Slack) through explicit schema-locked adapters.
+- Connector actions must be:
+  - policy-bound,
+  - replayable,
+  - auditable via Prism receipts.
+- Prism shall support a machine-readable event bus to publish:
+  - risk deltas,
+  - gate outcomes,
+  - and remediation events.
+- Missing or unavailable connectors must fail closed in strict mode and degrade predictably in observe-only mode.
+
+### PRISM-SRS-037 Resilience, DR, and Restore
+- Prism shall support deterministic backup and restore of Prism state (`.prism/state`, receipts, snapshots, and policy cache).
+- Recovery mode shall allow:
+  - selective replay by run range,
+  - conflict-detection for partially applied runs,
+  - and state continuity verification against chain hashes.
+- Restore outcomes must include a recovery report with deterministic missing/compensated commands.
+
+### PRISM-SRS-038 Encryption, Secrets, and Sensitive Metadata Control
+- Prism shall classify, redact, and optionally encrypt sensitive metadata fields before persistence and export.
+- Required capabilities:
+  - per-field redaction policy,
+  - deterministic hash for encrypted payload verification,
+  - and key-source abstraction compatible with KMS/HSM.
+- Operator session secrets and signed override tokens must not be written to plaintext history or logs.
+
+### PRISM-SRS-039 Service-Level Governance for the Tool
+- Prism shall expose internal operational SLOs:
+  - queue generation latency percentiles,
+  - gate decision latency,
+  - evidence freshness age,
+  - and command success/failure ratio.
+- `prism` shall emit self-health reports and alert when thresholds are violated.
+- Health failures at warning threshold shall create advisory tasks; failures at critical threshold shall block release scope gates.
+
+### PRISM-SRS-040 Multi-Operator Concurrency Control
+- Prism shall prevent accidental conflicting actions on overlapping target sets in team/parallel usage.
+- A deterministic lock model shall include:
+  - lock scope labels (module/tree/task),
+  - lease duration and renewal semantics,
+  - conflict detection before `prism do` mutation,
+  - and clean handoff release events.
+- When conflict is detected, Prism shall propose a deterministic merge/serialize path and preserve operator continuity notes.
 
 ## Non-Goals (v0.1)
 

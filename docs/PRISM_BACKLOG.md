@@ -322,6 +322,116 @@ Items are ordered to support one-operator throughput while preserving determinis
   - Admission schema compatibility test
   - Drift block and rebaseline test
 
+### BLK-023 — Tamper-evident audit ledger and verification
+- **SRS Linkage**: PRISM-SRS-034
+- **Priority**: P0
+- **Scope**: `.prism/audit.log`, `prism audit verify`, receipt command path
+- **Definition**
+  - Implement a deterministic append-only audit ledger with hash chaining across all mutating and gate/report commands.
+  - Add deterministic signature metadata and optional signer identity fields.
+  - Emit verify command output with failure reason, root hash, and missing-chain diagnostics.
+- **Acceptance**
+  - Any mutation to a previous ledger entry invalidates verification.
+  - `prism audit verify` produces stable pass/fail for unchanged inputs.
+  - Signed runs are accepted as primary evidence in evidence exports.
+- **Tests**
+  - Ledger tamper test
+  - Verification replay test
+  - Signature metadata schema test
+
+### BLK-024 — Fleet policy distribution and baseline drift handling
+- **SRS Linkage**: PRISM-SRS-035
+- **Priority**: P0
+- **Scope**: policy package fetch/cache, profile resolution, `prism policy` sync
+- **Definition**
+  - Add policy-package fetch and local pinned cache with provenance and checksum validation.
+  - Implement deterministic policy source precedence and drift report generation.
+  - Add re-baseline workflow for reconciling local overrides against fleet policy baseline.
+- **Acceptance**
+  - Same package + profile emits identical resolved policy tree.
+  - Drift report includes scoped re-scan recommendations.
+  - Verify mode blocks strict gates until re-baseline tasks are acknowledged.
+- **Tests**
+  - Drift-to-block deterministic test
+  - Package checksum and provenance test
+
+### BLK-025 — Deterministic enterprise connectors
+- **SRS Linkage**: PRISM-SRS-036
+- **Priority**: P0
+- **Scope**: connector plugin registry, issue tracker and chat ops adapters
+- **Definition**
+  - Implement schema-locked adapters for PR, issue, and alert systems with signed configuration.
+  - Add standardized emission events for gate outcomes and remediation tasks.
+  - Ensure connector actions are deterministic and replay-limited.
+- **Acceptance**
+  - Connectors reject unsigned or malformed payloads in strict mode.
+  - Event payloads are stable across repeated runs with unchanged input.
+  - Replay of connector events does not duplicate non-idempotent outputs.
+- **Tests**
+  - Strict connector validation test
+  - Event schema parity/replay test
+
+### BLK-026 — State backup, restore, and recovery evidence
+- **SRS Linkage**: PRISM-SRS-037
+- **Priority**: P1
+- **Scope**: `.prism/state`, backup CLI, restore verification
+- **Definition**
+  - Add `prism snapshot backup|restore|verify` workflows with lineage-aware restore plan.
+  - Add conflict reconciliation for partial restore operations.
+  - Emit deterministic recovery reports including unresolved or replayed commands.
+- **Acceptance**
+  - Restore from checkpoint reproduces prior deterministic run lineage.
+  - Conflict replay report is machine-readable and replay-safe.
+- **Tests**
+  - Partial restore conflict test
+  - Restore lineage replay test
+
+### BLK-027 — Sensitive metadata controls and redaction
+- **SRS Linkage**: PRISM-SRS-038
+- **Priority**: P1
+- **Scope**: storage, export format, execution logs
+- **Definition**
+  - Add deterministic field-level sensitivity tags and redaction transforms.
+  - Implement optional encrypted storage for sensitive payloads with key provider abstraction.
+  - Ensure no plaintext operator secrets are emitted in logs or exported JSON by default.
+- **Acceptance**
+  - Sensitive fields are redacted deterministically on all machine outputs unless explicitly decrypted.
+  - Encrypted fields remain verifiable via deterministic digest metadata.
+  - Security audit fails closed if encryption config is required but missing.
+- **Tests**
+  - Redaction consistency test
+  - Encrypted write/read + digest test
+
+### BLK-028 — Operational SLO observability and health controls
+- **SRS Linkage**: PRISM-SRS-039
+- **Priority**: P1
+- **Scope**: `prism metrics`, `prism health`, evidence reports
+- **Definition**
+  - Emit measurable SLO metrics for scoring, planning, gating, and execution.
+  - Add warning/critical threshold definitions and deterministic health actions.
+  - Integrate health failures into blocker surfaces where release scope is active.
+- **Acceptance**
+  - Health command returns stable schema and threshold-labeled status.
+  - Repeated failing commands produce actionable advisory/critical tasks.
+- **Tests**
+  - Threshold behavior test
+  - Gate-blocking health failure test
+
+### BLK-029 — Deterministic concurrency and conflict control
+- **SRS Linkage**: PRISM-SRS-040
+- **Priority**: P2
+- **Scope**: `prism do` locks, handoff flow, reservation model
+- **Definition**
+  - Implement scoped lock/lease model with conflict detection for overlapping run targets.
+  - Add deterministic queue serialization when conflicts occur.
+  - Generate continuation packet when handoff is required.
+- **Acceptance**
+  - Conflicting changes are blocked before mutation unless explicit serialized lease token provided.
+  - Handoff packets preserve deterministic continuation path and lineage hash.
+- **Tests**
+  - Conflict detection and block test
+  - Deterministic handoff continuity test
+
 ## Execution Order (Suggested)
 
 1. BLK-001
@@ -346,3 +456,10 @@ Items are ordered to support one-operator throughput while preserving determinis
 20. BLK-020
 21. BLK-021
 22. BLK-022
+23. BLK-023
+24. BLK-024
+25. BLK-025
+26. BLK-026
+27. BLK-027
+28. BLK-028
+29. BLK-029
