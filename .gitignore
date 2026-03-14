@@ -1,0 +1,7 @@
+/target
+/dist
+/artifacts
+/local
+/tmp
+**/*.log
+**/.DS_Store
