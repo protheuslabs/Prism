@@ -504,6 +504,139 @@ Items are ordered to support one-operator throughput while preserving determinis
   - Bootstrap scaffold determinism test
   - Safe-default onboarding test
 
+### BLK-035 — Policy plane federation adapter service
+- **SRS Linkage**: PRISM-SRS-041, PRISM-SRS-032
+- **Priority**: P0
+- **Scope**: policy ingestion, policy bundle cache, strict mode connectors
+- **Definition**
+  - Implement external policy federation adapters that consume signed policy bundles from central policy systems.
+  - Add deterministic bundle refresh, signature validation, and override conflict resolution with explicit audit traces.
+- **Acceptance**
+  - Missing or invalid policy bundles block strict mode.
+  - Overrides are applied only when precedence witness is recorded and justified.
+  - Bundle drift emits deterministic re-baseline tasks.
+- **Tests**
+  - Bundle verification fail-fast test
+  - Override precedence replay test
+
+### BLK-036 — Trust vault + evidence interoperability
+- **SRS Linkage**: PRISM-SRS-042, PRISM-SRS-008, PRISM-SRS-022
+- **Priority**: P0
+- **Scope**: evidence export/import API, vault client adapters
+- **Definition**
+  - Add evidence export/import integration for central trust vaults (policy signatures, SBOM, dependencies, manifests).
+  - Add deterministic checksum and manifest references in every release-scoped run.
+- **Acceptance**
+  - Every release run includes a vault reference and checksum fingerprint.
+  - Tampered evidence manifests are rejected deterministically.
+  - Vault lookups are reproducible across retries.
+- **Tests**
+  - Vault reference determinism test
+  - Tampered manifest rejection test
+
+### BLK-037 — Incident command plane integration
+- **SRS Linkage**: PRISM-SRS-043, PRISM-SRS-006, PRISM-SRS-015
+- **Priority**: P0
+- **Scope**: incident command API, incident handoff payloads
+- **Definition**
+  - Add deterministic incident handoff API and event export for external incident responders.
+  - Implement closed-loop linkage between Prism incidents and ticketed remediation runs.
+- **Acceptance**
+  - Incident IDs remain stable across related ticket events.
+  - Release-mode gates include blocker links from unresolved critical incidents.
+  - Incident replay reconstructs transition sequence and evidence.
+- **Tests**
+  - Incident-to-ticket ID parity test
+  - Release gate critical-incident block test
+
+### BLK-038 — SLO observability and health scoring surface
+- **SRS Linkage**: PRISM-SRS-044, PRISM-SRS-039, PRISM-SRS-020
+- **Priority**: P1
+- **Scope**: `prism health`, metrics collector, release gating integration
+- **Definition**
+  - Add structured health metric exports and deterministic remediation suggestions for latency, gate, and execution quality KPIs.
+  - Tie health failures to advisory/critical task generation.
+- **Acceptance**
+  - Health thresholds are deterministic and versioned.
+  - Critical health states are represented as actionable tasks or blockers.
+  - Health export payloads are stable across reruns.
+- **Tests**
+  - Health threshold determinism test
+  - Gated blocking health path test
+
+### BLK-039 — Secrets + role boundary hardening
+- **SRS Linkage**: PRISM-SRS-045, PRISM-SRS-027, PRISM-SRS-018
+- **Priority**: P0
+- **Scope**: auth layer, secret provider adapter, override flow
+- **Definition**
+  - Implement strict role/actor handling, short-lived tokens, and sealed override metadata for mutating operations.
+  - Add sealed secret injection paths for CI and machine automation.
+- **Acceptance**
+  - Mutating commands reject invalid or expired identity context.
+  - Sensitive override metadata is never written in plaintext.
+  - Unauthorized override attempts are logged as signed audit events.
+- **Tests**
+  - Role-and-token rejection test
+  - Secret redaction and sealed metadata test
+
+### BLK-040 — Cross-repo knowledge graph and contract plane
+- **SRS Linkage**: PRISM-SRS-046, PRISM-SRS-025, PRISM-SRS-007
+- **Priority**: P1
+- **Scope**: registry client, contract loader, boundary metadata resolver
+- **Definition**
+  - Add a contract/ownership/domain registry client with deterministic boundary metadata and migration history.
+  - Integrate registry inputs into scoring and transfer-risk components.
+- **Acceptance**
+  - Unknown boundary transitions are treated as high-risk with explicit warnings/blockers.
+  - Registry drift creates deterministic rescan/re-score triggers.
+  - Registry snapshots are versioned and replayable.
+- **Tests**
+  - Registry boundary unknown-risk deterministic test
+  - Snapshot drift replay test
+
+### BLK-041 — AI-generated change guard and review gate
+- **SRS Linkage**: PRISM-SRS-047, PRISM-SRS-033, PRISM-SRS-005
+- **Priority**: P1
+- **Scope**: `prism enforce`, import adapters for AI diff payloads
+- **Definition**
+  - Add policy checks for AI-generated change proposals before `do` or release actions.
+- **Acceptance**
+  - AI proposals without policy proof or risk classification are treated as advisory/high risk by default.
+  - Policy override is explicit and receipt-backed.
+  - Enforced AI-proposal traces are replayable and explainable.
+- **Tests**
+  - AI proposal strict-mode failure test
+  - Proposal trace reproducibility test
+
+### BLK-042 — Release and delivery orchestration bridge
+- **SRS Linkage**: PRISM-SRS-048, PRISM-SRS-012, PRISM-SRS-019
+- **Priority**: P0
+- **Scope**: release descriptors, package metadata, gate handoff
+- **Definition**
+  - Add a release-bridge mode that validates packaging descriptors, manifest hashes, and dependency attestations before release.
+- **Acceptance**
+  - Missing required release descriptors fail strict release scope.
+  - Release decisions include deterministic release artifact fingerprint.
+  - Reused artifacts remain stable unless descriptor/version changed.
+- **Tests**
+  - Descriptor missing/invalid fail-fast test
+  - Release artifact continuity and hash stability test
+
+### BLK-043 — Deterministic connector orchestration hub
+- **SRS Linkage**: PRISM-SRS-049, PRISM-SRS-036, PRISM-SRS-029
+- **Priority**: P1
+- **Scope**: connector registry, webhook dedupe, schema version manager
+- **Definition**
+  - Add orchestrator hub with schema versioning, dedupe keys, and deterministic event replay semantics.
+  - Emit PR/incidents/events consistently across tool surfaces.
+- **Acceptance**
+  - Duplicate connector deliveries are idempotent and traceable.
+  - Schema mismatches are explicitly blocked in strict mode.
+  - Replay does not produce divergent event IDs for unchanged inputs.
+- **Tests**
+  - Connector dedupe replay test
+  - Schema mismatch blocking test
+
 ## Execution Order (Suggested)
 
 1. BLK-001
@@ -540,3 +673,12 @@ Items are ordered to support one-operator throughput while preserving determinis
 32. BLK-032
 33. BLK-033
 34. BLK-034
+35. BLK-035
+36. BLK-036
+37. BLK-037
+38. BLK-038
+39. BLK-039
+40. BLK-040
+41. BLK-041
+42. BLK-042
+43. BLK-043

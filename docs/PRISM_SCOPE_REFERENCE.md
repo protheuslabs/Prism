@@ -28,6 +28,20 @@ Out of scope:
 - Direct policy syntax authoring for annotations
 - Source code refactor or merge-safety mechanics
 
+### Complementary platform components (not in Prism)
+
+Prism stays the execution and decision plane. The following adjacent platform components are intentionally external and only contract in when needed:
+
+- Policy federation and approval plane (policy distribution, signed bundles, precedence resolution)
+- Trust/evidence vault (SBOM, dependency provenance, release manifest integrity)
+- Incident command plane (escalation, runbooks, closure evidence)
+- Observability/SLO plane (health telemetry, thresholded alerts, governance drift reporting)
+- Secrets and identity boundary plane (role checks, short-lived tokens, encrypted override metadata)
+- Cross-repo contract registry (ownership maps, domain boundaries, migration graph)
+- Delivery and release bridge (artifact descriptor checks, release handoff to CI/package systems)
+- AI safety guard plane (AI change proposal validation, risk classification, replay-safe policy checks)
+- Extension and connector hub (Slack/Jira/GitHub/Teams deterministic event publication)
+
 ## Why this boundary exists
 
 Without the boundary, orchestration can become a second source of source/annotation drift.

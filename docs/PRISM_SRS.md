@@ -429,6 +429,86 @@ These are all explicit in `PRISM_ARCHITECTURE.md`; implementation progress again
   - and clean handoff release events.
 - When conflict is detected, Prism shall propose a deterministic merge/serialize path and preserve operator continuity notes.
 
+### PRISM-SRS-041 Policy Plane Federation Adapter
+- Prism shall support a dedicated policy distribution and enforcement adapter for external policy systems.
+- The adapter shall:
+  - fetch signed policy bundles (organization, domain, repository profile),
+  - resolve deterministic precedence and override policy,
+  - and emit policy bundle fingerprints in all enforcement artifacts.
+- Prism shall allow external repos to consume a shared policy cache while preserving explicit repo-local exceptions.
+- All policy bundle verification failures in strict mode shall block release-scope execution.
+
+### PRISM-SRS-042 Trust and Evidence Vault Integration
+- Prism shall exchange trust and compliance evidence with a central evidence vault service for:
+  - policy signatures,
+  - release manifests,
+  - SBOM and dependency attestations,
+  - and connector event receipts.
+- Prism shall export evidence bundle references in a vault-compatible envelope schema with deterministic versioning.
+- Missing or mismatched trust references in strict mode shall block `prism gate --scope release`.
+
+### PRISM-SRS-043 Incident Command and Recovery Plane
+- Prism shall integrate with a deterministic incident control module that owns escalation workflow, severity routing, and post-incident audit trails.
+- Incident state transitions emitted by Prism shall be mirrored into the incident plane with deterministic IDs and closure proofs.
+- Incident plane updates shall include Prism task IDs, gate blockers, and affected policy set fingerprints.
+- Repeat incidents with same signature inputs shall replay identically unless severity policy changes.
+
+### PRISM-SRS-044 Observability and SLO Plane
+- Prism shall provide first-class telemetry export to a deterministic monitoring plane for:
+  - scoring latency,
+  - gate decision outcomes,
+  - evidence lag,
+  - and task execution failure rates.
+- Monitoring artifacts shall feed into Prism health tasks with warning/critical thresholds and remediation actions.
+- SLO breaches in strict release mode shall emit deterministic blockers and evidence references.
+
+### PRISM-SRS-045 Secrets and Credential Boundary Plane
+- Prism shall support policy-bound access through an operator identity and secret-management abstraction.
+- Required capabilities:
+  - role/actor claims in command receipts,
+  - short-lived token workflows for sensitive operations,
+  - and encrypted-at-rest storage for session/override metadata.
+- Secret-provider failures or policy mismatch in strict mode shall fail-closed for mutating commands.
+
+### PRISM-SRS-046 Cross-Repo Knowledge Graph and Contract Registry
+- Prism shall support a deterministic repository registry for domain contracts, ownership maps, and migration boundaries used for policy-weighted scoring.
+- Registry entries shall include:
+  - module ownership graph,
+  - domain boundary definitions,
+  - contract references,
+  - and historical migration status.
+- Prism scoring and planning shall consume registry links to prevent domain boundary blind spots.
+
+### PRISM-SRS-047 AI Change Governance and Safety Guard
+- Prism shall include a validation path for AI-assisted code-change proposals (patches, refactors, annotations) before execution.
+- Validation shall cover:
+  - policy conformance,
+  - risky surface changes,
+  - dependency/conflict checks,
+  - and owner/load impact.
+- High-risk AI-suggested actions shall be blocked by default in strict mode unless explicitly approved with signed override metadata.
+
+### PRISM-SRS-048 Deliverable Integrity and Release Orchestration Plane
+- Prism shall consume deterministic release/package descriptors from a release tooling plane (artifact names, signatures, install hashes).
+- Prism shall produce release readiness artifacts that can be consumed by external orchestrators and CI gates.
+- Inconsistent descriptor input or missing release envelope continuity shall fail strict release gates.
+
+### PRISM-SRS-049 Communication and Orchestrator Hub
+- Prism shall publish deterministic connector events for ticketing, collaboration, and PR systems from gate, plan, and incident workflows.
+- Events shall include:
+  - blocker IDs,
+  - policy/score provenance,
+  - and replay-idempotency markers.
+- Connector failures in strict mode during release workflow shall surface as blocking issues and include remediation actions.
+
+### PRISM-SRS-050 Shared Workspace and Multi-Tool API Contract
+- Prism shall expose a stable API contract for partner tools (Dashboards, AI copilots, PM systems, risk engines).
+- Contract requirements:
+  - versioned schema per endpoint,
+  - deterministic paging and ordering,
+  - signed-like lineage metadata.
+- Any schema/version violation from partner tools must be reported and block mutable actions when the partner is configured as hard-coupled.
+
 ## Non-Goals (v0.1)
 
 - Not a replacement for IDE refactoring tools.
