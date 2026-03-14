@@ -21,6 +21,7 @@ Prism is built as a Rust-first, deterministic complexity orchestration engine.
 
 Implementation detail and rollout sequencing are documented in:
 - [`PRISM_TECH_STACK.md`](/Users/jay/.openclaw/workspace/apps/prism/docs/PRISM_TECH_STACK.md)
+- [Architecture contract](/Users/jay/.openclaw/workspace/apps/prism/docs/PRISM_ARCHITECTURE.md)
 
 ## First commands
 

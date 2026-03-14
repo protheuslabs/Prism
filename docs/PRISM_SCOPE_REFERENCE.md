@@ -37,6 +37,9 @@ With this boundary:
 - LensMap stays source-truth-first and evidence-first.
 - Both can evolve independently while sharing deterministic interfaces.
 
+Implementation reference:
+- [`PRISM_ARCHITECTURE.md`](/Users/jay/.openclaw/workspace/apps/prism/docs/PRISM_ARCHITECTURE.md)
+
 ## LensMap Inputs to Prism
 
 Prism expects LensMap to provide deterministic governance signals:

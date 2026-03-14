@@ -23,8 +23,21 @@ See also: [`PRISM_BACKLOG.md`](/Users/jay/.openclaw/workspace/apps/prism/docs/PR
 
 The authoritative implementation stack and rollout sequencing are defined in:
 - [`PRISM_TECH_STACK.md`](/Users/jay/.openclaw/workspace/apps/prism/docs/PRISM_TECH_STACK.md)
+- [`PRISM_ARCHITECTURE.md`](/Users/jay/.openclaw/workspace/apps/prism/docs/PRISM_ARCHITECTURE.md)
 
 This doc is normative for design decisions that are not fully covered in individual SRS requirements (especially implementation ordering, module decomposition, and deterministic execution guarantees).
+
+## Architecture fit vs. mission
+
+Prism is architected from day one as an execution-control tool rather than a source annotation tool. That makes it a better long-term fit for one-operator scale than LensMap's knowledge layer.
+
+Ideal state for Prism requires:
+- deterministic domain engine isolation from transport surfaces (CLI/API/connectors),
+- policy and enforcement as a single pre-action gate,
+- receipt-led execution with audit-chained lineage, and
+- resumable checkpoints for large-scale reruns.
+
+These are all explicit in `PRISM_ARCHITECTURE.md`; implementation progress against that document should be the primary architectural compliance check.
 
 ## Requirements
 

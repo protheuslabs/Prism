@@ -23,6 +23,9 @@ Prism is implemented as an offline, deterministic, auditable Rust CLI with expli
 - Single-maintainer practicality: strong static typing and explicit errors reduce hidden behavior drift.
 - Audit-readiness: signed evidence, immutable receipts, and reproducible chain hashes support enterprise evidence collection.
 
+The concrete layer layout and command order is codified in:
+- [`PRISM_ARCHITECTURE.md`](/Users/jay/.openclaw/workspace/apps/prism/docs/PRISM_ARCHITECTURE.md).
+
 ## How it will be implemented
 
 ### 1) Foundation layer (immediately)
