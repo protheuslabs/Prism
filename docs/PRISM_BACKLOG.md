@@ -432,6 +432,78 @@ Items are ordered to support one-operator throughput while preserving determinis
   - Conflict detection and block test
   - Deterministic handoff continuity test
 
+### BLK-030 — Policy enforcer mode for external repositories
+- **SRS Linkage**: PRISM-SRS-005, PRISM-SRS-019, PRISM-SRS-033
+- **Priority**: P0
+- **Scope**: `prism gate`, policy profile loader, `.prism/policy-*`
+- **Definition**
+  - Add a dedicated enforcement mode optimized for non-Prism repos: read-only signal ingestion + policy enforcement for CI and pre-merge gates.
+  - Emit deterministic policy decision records with actionable blockers and remediation IDs, without requiring local state mutation.
+- **Acceptance**
+  - Enforcer mode runs in strict environments and fails closed when critical signals are missing.
+  - Blockers include source/decision fingerprints for replay and audit.
+  - Same repository+policy inputs produce identical enforcement results.
+- **Tests**
+  - Read-only enforcement determinism test
+  - Strict-mode missing-signal fail-closed test
+
+### BLK-031 — Policy precedence, exception, and waiver engine
+- **SRS Linkage**: PRISM-SRS-021, PRISM-SRS-032, PRISM-SRS-031
+- **Priority**: P0
+- **Scope**: policy runtime, waiver registry, exceptions API
+- **Definition**
+  - Add explicit precedence and override model for policy layers (`global`, `fleet`, `repo`, `operator`, `session`) with immutable rationale for waivers.
+  - Add short-lived, auditable waiver records with automatic expiry and re-check scheduling.
+- **Acceptance**
+  - Precedence conflicts are deterministic and fully traceable.
+  - Waivers require expiration and review metadata.
+  - Enforcement without waiver is strict and deterministic.
+- **Tests**
+  - Precedence conflict deterministic test
+  - Waiver expiry and re-check test
+
+### BLK-032 — Evidence-first CI webhook and review feedback bridge
+- **SRS Linkage**: PRISM-SRS-025, PRISM-SRS-036, PRISM-SRS-023
+- **Priority**: P1
+- **Scope**: CI connectors, webhook delivery, review summary renderer
+- **Definition**
+  - Add deterministic webhooks/formatters for PR comments and ticket updates on gate failures or stale risk escalation.
+  - Add schema versioning + replay-safe de-duplication for emitted feedback events.
+- **Acceptance**
+  - Connector failures in strict mode block externalized release attempts.
+  - Same input batch yields idempotent external feedback payload.
+- **Tests**
+  - Deterministic webhook schema test
+  - Replay dedupe test
+
+### BLK-033 — Policy-aware execution plan provenance and explainability
+- **SRS Linkage**: PRISM-SRS-005, PRISM-SRS-007, PRISM-SRS-020
+- **Priority**: P1
+- **Scope**: `prism plan`, report explainability payloads
+- **Definition**
+  - Extend plans to include explicit policy-origin tags and dependency-to-policy trace links for each suggested action.
+  - Add policy-risk overlays for one-click executive summaries and operator brief output.
+- **Acceptance**
+  - Every recommendation includes at least one policy reason code and a trace reference.
+  - Explanation payload remains deterministic and diff-stable.
+- **Tests**
+  - Policy traceability test
+  - Plan-policy consistency regression test
+
+### BLK-034 — External-repo setup bootstrap and compliance scaffolding
+- **SRS Linkage**: PRISM-SRS-017, PRISM-SRS-018, PRISM-SRS-022
+- **Priority**: P1
+- **Scope**: `prism init`, policy preset catalog, onboarding templates
+- **Definition**
+  - Add repository bootstrap command that initializes policy manifests, receipt folders, and baseline enforcement rules for new managed repos.
+  - Include a "safe defaults" profile for regulated and medical/financial domains.
+- **Acceptance**
+  - New repo bootstrap emits valid starter policy and deterministic baseline signatures.
+  - Bootstrapped repo passes a `prism gate --strict` dry run with explicit allowlist for incomplete signal states.
+- **Tests**
+  - Bootstrap scaffold determinism test
+  - Safe-default onboarding test
+
 ## Execution Order (Suggested)
 
 1. BLK-001
@@ -463,3 +535,8 @@ Items are ordered to support one-operator throughput while preserving determinis
 27. BLK-027
 28. BLK-028
 29. BLK-029
+30. BLK-030
+31. BLK-031
+32. BLK-032
+33. BLK-033
+34. BLK-034
