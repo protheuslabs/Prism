@@ -205,6 +205,105 @@ See also: [`PRISM_BACKLOG.md`](/Users/jay/.openclaw/workspace/apps/prism/docs/PR
 - These KPIs shall be consumable by CI, leadership dashboards, and self-review.
 - KPIs shall distinguish machine-certain actions from human-dependent actions.
 
+### PRISM-SRS-021 Adaptive Deterministic Policy Profiles
+- Prism shall support environment and role-specific policy profiles that control strictness, risk cutoffs, and auto-accept thresholds.
+- Profiles shall merge deterministically from:
+  - global defaults,
+  - repository policy,
+  - and active mission profile (`explore`, `stability`, `incident`, `audit_preflight`).
+- Profile resolution and precedence must be replayable and included in every gate and planning receipt.
+- Missing profile fields must fail closed in strict mode and fail open only with explicit override and audit trace.
+
+### PRISM-SRS-022 Integrity and Compliance Evidence Exports
+- Prism shall emit audit-grade evidence packages per release cycle and per gate run.
+- Each package shall include:
+  - score inputs hash,
+  - task decision graph,
+  - gate decisions,
+  - evidence completeness manifest,
+  - and operator approvals/rejections.
+- Evidence packages shall be exportable in JSON and signed metadata format for external compliance systems.
+- Evidence artifacts shall be immutable by default and linked by deterministic `prism`-run identity.
+
+### PRISM-SRS-023 Deterministic What-If Simulation
+- Prism shall provide `prism simulate` to evaluate hypothetical operator actions before execution.
+- Simulations shall model:
+  - task deferrals,
+  - profile changes,
+  - risk-threshold changes,
+  - and blast-radius escalation.
+- Simulation outputs must include projected risk reduction, owner load impact, and rollback cost estimate.
+- Prism shall guarantee no state mutations in simulation mode and emit a reproducible simulation receipt.
+
+### PRISM-SRS-024 Operational API and Query Surface
+- Prism shall expose a machine-readable query surface for external orchestrators (CLI JSON, optional local HTTP/stdio API).
+- Required query operations include:
+  - retrieve top risk units,
+  - retrieve active blockers,
+  - retrieve handoff packets,
+  - retrieve gate status by scope,
+  - and retrieve action receipts by id.
+- Query responses must be deterministic and versioned for third-party tool integration.
+- API and local command modes must emit the same schema and checksum anchors for parity.
+
+### PRISM-SRS-025 Cross-Domain Dependency and Transfer Maps
+- Prism shall detect critical cross-module dependencies and compute transfer risk for each module cluster.
+- Dependency maps shall support:
+  - critical-path amplification,
+  - boundary ownership concentration,
+  - migration dependency blocking,
+  - and domain-to-domain coupling risk.
+- Transfer maps shall be used in prioritization and shall be explainable in `priority_explain`.
+
+### PRISM-SRS-026 Incident-Class Triage Playbooks
+- Prism shall maintain deterministic operator playbooks for common high-risk classes:
+  - critical policy violation,
+  - silent score drift,
+  - unresolved high-value stale debt,
+  - and release-blocking evidence missing.
+- Each playbook shall define:
+  - required evidence,
+  - approved first-respond actions,
+  - escalation triggers,
+  - and handoff handoff template.
+- Playbook execution shall produce deterministic state markers and closure checks.
+
+### PRISM-SRS-027 Runtime Security and Access Controls
+- Prism shall implement command-layer authorization profiles:
+  - read-only,
+  - planning-only,
+  - execute,
+  - and emergency override.
+- Unauthorized state-changing commands shall be rejected with immutable audit logs.
+- Critical mutating flows (`do`, `apply`, `handoff resolve`) shall require proof of operator authorization and immutable approval metadata.
+- Access decisions and audit entries shall be included in gate receipts.
+
+### PRISM-SRS-028 Data Lineage and Replayability
+- Prism shall provide deterministic replay of any observed run from snapshot hash + config hash + command identity.
+- Replay output must be byte-for-byte stable for deterministic modes.
+- Run metadata shall include command lineage chain (parent run, derived run, rerun run).
+- Operators shall be able to diff two deterministic runs and receive explainable deltas.
+
+### PRISM-SRS-029 Health Governance and Drift Alerts
+- Prism shall detect governance drift across cycles:
+  - rising overdue counts,
+  - declining owner response rates,
+  - repeated deferment without impact reduction,
+  - and policy bypass attempts.
+- Prism shall emit health alerts with severity, confidence, and actionable remediation IDs.
+- Alert generation shall support throttling and alert suppression windows without hiding release-blocking conditions.
+
+### PRISM-SRS-030 Self-Calibrating Model and Feedback Loop
+- Prism shall update scoring coefficients through operator feedback loops from resolved incidents and closed tasks.
+- Calibration updates shall be:
+  - bounded,
+  - audit-logged,
+  - and explainable.
+- Prism shall support two modes:
+  - static coefficients (default),
+  - controlled adaptation mode with manual enable and rollback.
+- All calibration changes must be reflected in policy receipts and versioned config deltas.
+
 ## Non-Goals (v0.1)
 
 - Not a replacement for IDE refactoring tools.

@@ -154,6 +154,146 @@ Items are ordered to support one-operator throughput while preserving determinis
   - KPI determinism test
   - Report generation regression test
 
+### BLK-011 — Policy profile engine and deterministic precedence
+- **SRS Linkage**: PRISM-SRS-021
+- **Priority**: P0
+- **Scope**: policy resolution and `prism gate/plan` config layer
+- **Definition**
+  - Implement layered policy profiles for role/environment with deterministic precedence and inheritance.
+  - Persist resolved policy fingerprint in gate and plan receipts.
+- **Acceptance**
+  - Changing profile source ordering produces predictable re-resolved output.
+  - Strict mode rejects undefined or conflicting profile precedence.
+  - Active profile is always exposed in command artifacts.
+- **Tests**
+  - Precedence determinism test
+  - Strict-mode conflict rejection test
+
+### BLK-012 — Evidence package export and compliance artifacting
+- **SRS Linkage**: PRISM-SRS-022
+- **Priority**: P0
+- **Scope**: `prism evidence`, `prism gate --emit-evidence`
+- **Definition**
+  - Generate immutable evidence bundles containing score inputs, decision graph, and approvals.
+  - Support JSON+signed envelope output compatible with external compliance tooling.
+- **Acceptance**
+  - Each gate run produces a single bundle reference with digest.
+- **Tests**
+  - Evidence bundle schema/manifest test
+  - Bundle replay verification test
+
+### BLK-013 — What-if simulation before execution
+- **SRS Linkage**: PRISM-SRS-023
+- **Priority**: P0
+- **Scope**: `prism simulate`
+- **Definition**
+  - Add deterministic simulation mode for profile changes, deferrals, and blast-radius shifts.
+  - No state mutation allowed; output includes projected risk reduction and rollback cost.
+- **Acceptance**
+  - Simulated output is stable for fixed inputs.
+  - Simulation clearly marks no mutation and can be replayed.
+- **Tests**
+  - Simulation determinism test
+  - Non-mutation enforcement test
+
+### BLK-014 — Operator query API and orchestration interface
+- **SRS Linkage**: PRISM-SRS-024
+- **Priority**: P1
+- **Scope**: `prism query`, optional local API server
+- **Definition**
+  - Add machine-readable endpoints/commands for top risks, blockers, receipts, and handoff packet retrieval.
+  - Keep JSON schema versioned and compatible across CLI/API modes.
+- **Acceptance**
+  - Query responses include run hashes and deterministic ordering.
+  - CLI and API produce equivalent payloads for shared queries.
+- **Tests**
+  - API/CLI parity test
+  - Query ordering determinism test
+
+### BLK-015 — Cross-domain dependency transfer risk modeling
+- **SRS Linkage**: PRISM-SRS-025
+- **Priority**: P1
+- **Scope**: atlas scoring inputs and plan ordering
+- **Definition**
+  - Add dependency transfer risk model for coupled modules and ownership concentration paths.
+  - Surface model outputs in priority explanations and plan rationale.
+- **Acceptance**
+  - Transfer risk is deterministic and additive in score explanations.
+  - Migration blockers are flagged with explicit dependency links.
+- **Tests**
+  - Coupling graph determinism test
+  - Blocker trace regression test
+
+### BLK-016 — Incident-class playbooks and deterministic remediation sequences
+- **SRS Linkage**: PRISM-SRS-026
+- **Priority**: P1
+- **Scope**: incident workflow engine
+- **Definition**
+  - Introduce deterministic playbook templates for high-risk classes with required evidence and transitions.
+  - Ensure playbook execution updates incident state and produces closure checks.
+- **Acceptance**
+  - Known incident classes auto-suggest ordered remediation sequence.
+  - Replay of the same incident sequence yields identical markers.
+- **Tests**
+  - Playbook selection and state-transition test
+  - Closure check completeness test
+
+### BLK-017 — Access controls and command authorization
+- **SRS Linkage**: PRISM-SRS-027
+- **Priority**: P1
+- **Scope**: command executor and audit log
+- **Definition**
+  - Implement role-gated command tiers and enforce authorization on mutating paths.
+  - Persist immutable authorization and audit events with command identity.
+- **Acceptance**
+  - Unauthorized mutating commands are rejected with auditable reason code.
+  - Approval metadata appears in execution receipts.
+- **Tests**
+  - Unauthorized command rejection test
+  - Audit trace integrity test
+
+### BLK-018 — Deterministic replay and run lineage
+- **SRS Linkage**: PRISM-SRS-028
+- **Priority**: P2
+- **Scope**: run registry, replay utility
+- **Definition**
+  - Store run lineage and support diff/replay by snapshot/config/command tuple.
+  - Provide run-diff output for audit and debug.
+- **Acceptance**
+  - Replay produces byte-for-byte parity in deterministic mode.
+  - Lineage chain can be queried and validated.
+- **Tests**
+  - Replay parity test
+  - Lineage chain integrity test
+
+### BLK-019 — Drift and health alerting
+- **SRS Linkage**: PRISM-SRS-029
+- **Priority**: P2
+- **Scope**: health monitor, report generation
+- **Definition**
+  - Add drift detectors and health alerts for key governance/stability trends.
+  - Provide throttled output with explicit emergency override for blocking risks.
+- **Acceptance**
+  - Alert signals are explainable with severity and remediation linkage.
+  - Release-blocking signals cannot be fully suppressed.
+- **Tests**
+  - Drift detection and alert threshold test
+  - Suppression policy override test
+
+### BLK-020 — Controlled adaptive scoring calibration
+- **SRS Linkage**: PRISM-SRS-030
+- **Priority**: P2
+- **Scope**: scoring config, calibration command
+- **Definition**
+  - Add bounded calibration updates from resolved incidents and operator feedback.
+  - Make calibration changes explicit and revertible.
+- **Acceptance**
+  - Calibration updates include deltas, rationale, and versioned rollback marker.
+  - Static mode remains default.
+- **Tests**
+  - Calibration diff and rollback test
+  - Evidence recording test for coefficient update
+
 ## Execution Order (Suggested)
 
 1. BLK-001
@@ -166,3 +306,13 @@ Items are ordered to support one-operator throughput while preserving determinis
 8. BLK-008
 9. BLK-009
 10. BLK-010
+11. BLK-011
+12. BLK-012
+13. BLK-013
+14. BLK-014
+15. BLK-015
+16. BLK-016
+17. BLK-017
+18. BLK-018
+19. BLK-019
+20. BLK-020
