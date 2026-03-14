@@ -265,7 +265,7 @@ See also: [`PRISM_BACKLOG.md`](/Users/jay/.openclaw/workspace/apps/prism/docs/PR
   - required evidence,
   - approved first-respond actions,
   - escalation triggers,
-  - and handoff handoff template.
+  - and handoff template.
 - Playbook execution shall produce deterministic state markers and closure checks.
 
 ### PRISM-SRS-027 Runtime Security and Access Controls
