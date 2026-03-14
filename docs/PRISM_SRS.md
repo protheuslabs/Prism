@@ -304,6 +304,46 @@ See also: [`PRISM_BACKLOG.md`](/Users/jay/.openclaw/workspace/apps/prism/docs/PR
   - controlled adaptation mode with manual enable and rollback.
 - All calibration changes must be reflected in policy receipts and versioned config deltas.
 
+### PRISM-SRS-031 Change Admission and Gate Integration
+- Prism shall expose admission outputs for CI/PR workflows that consume enforcement results in machine format.
+- Admission artifacts shall include:
+  - changed file set hash,
+  - enforce results by policy ID,
+  - failed blockers with severity,
+  - required remediation IDs,
+  - and deterministic overall pass/fail.
+- Admission mode shall fail closed on missing policy definition/version, signature, or mandatory evidence inputs.
+- `prism gate` and `prism enforce` results shall share a canonical schema and stable exit semantics.
+
+### PRISM-SRS-032 Enforcement Drift and Policy Evolution
+- Prism shall detect policy drift between runs and require explicit re-baseline for active enforcement.
+- Drift sources include:
+  - profile/version edits,
+  - scope boundary changes,
+  - new high-risk rule additions,
+  - and removed exception entries.
+- On drift, Prism shall emit:
+  - impact estimate,
+  - stale/unsafe queue candidates,
+  - and minimum required re-scan scope.
+- Unreviewed policy drift in strict mode shall prevent release admission until acknowledged.
+
+### PRISM-SRS-033 New Change Policy Enforcement
+- Prism shall provide a policy-enforcement command mode (`prism enforce` or equivalent) for every proposed mutation input.
+- New or modified assets shall be checked against active policy before `prism do` execution and before gate/release submission.
+- Enforcement scope shall include:
+  - path and module policy mapping,
+  - required ownership/review evidence,
+  - policy severity thresholds,
+  - risk budget and blast-radius constraints,
+  - and mandatory compliance tags.
+- Enforcement result semantics:
+  - `pass` when all checks succeed,
+  - `warn` for advisory/non-blocking violations,
+  - `block` for strict violations that prevent execution/release.
+- Emergency override must require explicit signed token and produce an immutable override justification record.
+- Enforcer results shall be receipt-backed and deterministic, including policy checksum and effective profile.
+
 ## Non-Goals (v0.1)
 
 - Not a replacement for IDE refactoring tools.

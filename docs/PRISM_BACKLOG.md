@@ -294,6 +294,34 @@ Items are ordered to support one-operator throughput while preserving determinis
   - Calibration diff and rollback test
   - Evidence recording test for coefficient update
 
+### BLK-021 — New-change policy enforcement gate
+- **SRS Linkage**: PRISM-SRS-033
+- **Priority**: P0
+- **Scope**: `prism enforce`, `prism do`, policy validation engine
+- **Definition**
+  - Add a deterministic pre-mutation enforcement path for proposed changes.
+  - Enforce owner/review/compliance checks and profile constraints before execution.
+  - Support explicit pass/warn/block outputs and signed override requirements.
+- **Acceptance**
+  - `prism do` cannot proceed on block violations without emergency override.
+- **Tests**
+  - Enforcement semantics matrix test (`pass`, `warn`, `block`)
+  - Override audit trail and replay test
+
+### BLK-022 — CI admission and drift enforcement
+- **SRS Linkage**: PRISM-SRS-031, PRISM-SRS-032
+- **Priority**: P0
+- **Scope**: `prism gate`, `prism enforce`, admission artifact model
+- **Definition**
+  - Produce machine-readable admission reports for CI/PR workflows with deterministic exit outcomes.
+- Policy drift should force re-baseline and block admission until acknowledged.
+- **Acceptance**
+  - Admission output schema is stable and ingestible by external pipelines.
+  - Unacknowledged strict drift prevents release admission.
+- **Tests**
+  - Admission schema compatibility test
+  - Drift block and rebaseline test
+
 ## Execution Order (Suggested)
 
 1. BLK-001
@@ -316,3 +344,5 @@ Items are ordered to support one-operator throughput while preserving determinis
 18. BLK-018
 19. BLK-019
 20. BLK-020
+21. BLK-021
+22. BLK-022
