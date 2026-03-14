@@ -38,6 +38,9 @@ cargo run -- gate --root . --scope release
 - `prism gate`  
   Evaluate release/merge gates.
 
+- `prism enforce`  
+  Evaluate policy checks for a proposed mutation without mutating.
+
 - `prism incident`  
   Open/close operator incidents and attach evidence.
 
@@ -48,6 +51,38 @@ cargo run -- gate --root . --scope release
 - `.prism/index.json`: local risk index snapshot
 - `.prism/tasks.jsonl`: machine-readable task queue
 - `.prism/receipts/*.json`: operation receipts for auditability
+
+## Policy enforcement (optional, recommended for CI)
+
+Prism now supports an optional `.prism/policy.json` policy envelope.
+If the policy file is absent, Prism runs with enforcement `off` and remains non-blocking.
+
+The Prism repo itself ships without a policy file so internal maintenance stays flexible; add `.prism/policy.json` only in repos where you want strict release gates.
+
+Policy modes:
+- `off` (default): collect checks, never block.
+- `warn`: collect checks, emit `warn` on violations but still permit execution.
+- `strict`: block on failed required checks for `prism do` and `prism gate`.
+
+Example:
+
+```json
+{
+  "mode": "strict",
+  "enabled": true,
+  "policy_version": "2026.03.0",
+  "require_owner": true,
+  "require_reviewed": true,
+  "max_task_score": 850,
+  "allowed_modules": ["client/runtime/systems/", "core/layer0/"],
+  "blocked_modules": ["docs/"]
+}
+```
+
+`prism enforce` returns a structured policy decision:
+- `decision`: `pass` / `warn` / `block`
+- `checks`: deterministic list of evaluated checks
+- `policy`: policy hash + effective mode + profile for admission evidence
 
 ## Next steps
 
